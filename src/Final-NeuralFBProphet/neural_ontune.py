@@ -1,9 +1,9 @@
 import argparse
 
 import pandas as pd
-from neuralprophet import NeuralProphet
 
 from data.dataset import ontune_dataset
+from model.prophet import neural_prophet
 
 parse = argparse.ArgumentParser("Training!")
 parse.add_argument("--path", type=str, default="../../input/")
@@ -17,8 +17,5 @@ df, train, valid = ontune_dataset(args.path)
 if __name__ == "__main__":
     prophet_params = pd.read_pickle("../../parameters/best_two_params.pkl")
     prophet_params["epoch"] = args.epoch
-    model = NeuralProphet(**prophet_params)
-    metrics = model.fit(df, freq="1D")
-    future = model.make_future_dataframe(df, periods=144)
-    forecast = model.predict(future)
+    forecast = neural_prophet(prophet_params, df, "1D")
     forecast.to_csv("../../submission/" + args.file, index=False)

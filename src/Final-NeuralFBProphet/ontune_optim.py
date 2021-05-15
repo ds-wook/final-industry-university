@@ -7,7 +7,7 @@ from optuna import Trial
 from optuna.samplers import TPESampler
 from sklearn.metrics import mean_squared_error
 
-from data.dataset import two_seconds_dataset
+from data.dataset import ontune_dataset
 
 parse = argparse.ArgumentParser("Optimize")
 parse.add_argument("--path", type=str, default="../../input/")
@@ -15,7 +15,7 @@ parse.add_argument("--trials", type=int, default=360)
 parse.add_argument("--params", type=str, default="two_second_params.pkl")
 args = parse.parse_args()
 
-df, train, valid = two_seconds_dataset(args.path)
+df, train, valid = ontune_dataset(args.path)
 
 
 def objective(trial: Trial) -> float:
@@ -50,14 +50,14 @@ def objective(trial: Trial) -> float:
 
 if __name__ == "__main__":
     study = optuna.create_study(
-        study_name="two second hyperparameter",
+        study_name="ontune hyperparameter",
         direction="minimize",
         sampler=TPESampler(seed=42),
     )
     study.optimize(objective, n_trials=args.trials)
     prophet_params = study.best_params
-    prophet_params["epochs"] = 30
     prophet_params["batch_size"] = 64
+    prophet_params["seasonality_mode"] = "additive"
     prophet_params["loss_func"] = "MSE"
     prophet_params["weekly_seasonality"] = True
     prophet_params["daily_seasonality"] = True

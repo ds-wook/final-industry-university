@@ -67,3 +67,21 @@ def prophet(
     forecast = model.predict(future)
 
     return forecast
+
+
+def two_prophet(
+    params: Dict[str, Union[bool, float, int]], df: pd.DataFrame
+) -> pd.DataFrame:
+    cap = np.max(df.y)
+    floor = np.min(df.y)
+    df["cap"] = cap
+    df["floor"] = floor
+
+    model = Prophet(**params)
+    model.fit(df)
+    future = model.make_future_dataframe(periods=144, freq="H")
+    future["cap"] = cap
+    future["floor"] = floor
+    forecast = model.predict(future)
+
+    return forecast

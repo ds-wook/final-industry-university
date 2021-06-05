@@ -24,7 +24,7 @@ def ontune_dataset(path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series]:
     train = df[df["ds"] < "2021-03-20"]
     valid = df[df["ds"] >= "2021-03-20"].copy()
     valid["days"] = valid["ds"].apply(lambda x: x.day)
-    valid = valid.groupby("days")["y"].agg("mean")
+    valid = valid.groupby("days")["y"].agg("mean").reset_index()
     return df, train, valid
 
 
@@ -36,5 +36,5 @@ def vcenter_dataset(path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series]:
     train = df[df["ds"] < "2021-02-11"]
     valid = df[df["ds"] >= "2021-02-11"].copy()
     valid["days"] = valid["ds"].apply(lambda x: x.day)
-    valid = valid.groupby("days")["y"].agg("mean")
+    valid = valid.groupby("days")["y"].agg("mean").reset_index()
     return df, train, valid
